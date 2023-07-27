@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:meals_app/model/meals.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class MealsDetail extends StatelessWidget {
   const MealsDetail({super.key, required this.meal});
@@ -12,11 +11,52 @@ class MealsDetail extends StatelessWidget {
         appBar: AppBar(
           title: Text(meal.title),
         ),
-        body: Image.network(
-          meal.imageUrl,
-          height: 300,
-          width: double.infinity,
-          fit: BoxFit.cover,
+        body: Column(
+          children: [
+            Image.network(
+              meal.imageUrl,
+              height: 300,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+            const SizedBox(
+              height: 16,
+            ),
+            Text(
+              "Ingredients",
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              height: 14,
+            ),
+            for (final ingredient in meal.ingredients)
+              Text(
+                ingredient,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: Theme.of(context).colorScheme.onBackground),
+              ),
+            const SizedBox(
+              height: 14,
+            ),
+            Text(
+              "Steps",
+              style: Theme.of(context)
+                  .textTheme
+                  .titleLarge!
+                  .copyWith(color: Theme.of(context).colorScheme.onBackground),
+            ),
+            const SizedBox(
+              height: 14,
+            ),
+            for (final steps in meal.steps)
+              Text(
+                steps,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: Theme.of(context).colorScheme.onBackground),
+              )
+          ],
         ));
   }
 }
