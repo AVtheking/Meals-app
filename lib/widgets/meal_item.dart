@@ -10,11 +10,13 @@ class MealsItem extends StatelessWidget {
   final Meal meal;
   final void Function(Meal meal) onToggleFavorites;
   String get complexityText {
-    return meal.complexity.name[0] + meal.complexity.name.substring(1);
+    return meal.complexity.name[0].toUpperCase() +
+        meal.complexity.name.substring(1);
   }
 
   String get affordabilityText {
-    return meal.affordability.name[0] + meal.affordability.name.substring(1);
+    return meal.affordability.name[0].toUpperCase() +
+        meal.affordability.name.substring(1);
   }
 
   @override
