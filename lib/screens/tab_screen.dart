@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:meals_app/data/dummy_data.dart';
 import 'package:meals_app/model/meals.dart';
 import 'package:meals_app/screens/categories.dart';
 import 'package:meals_app/screens/filters_screen.dart';
 import 'package:meals_app/screens/meal_screen.dart';
 import 'package:meals_app/widgets/drawer_item.dart';
+
+const kInitialFilters = {
+  Filter.glutenFree: false,
+  Filter.lactoseFree: false,
+  Filter.vegetarian: false,
+  Filter.vegan: false
+};
 
 class TabScreen extends StatefulWidget {
   const TabScreen({super.key});
@@ -14,7 +22,8 @@ class TabScreen extends StatefulWidget {
 
 class _TabScreenState extends State<TabScreen> {
   int selectedPageIndex = 0;
-  var selectedPageTitle = "Categories";
+  Map<Filter, bool?> _selectedFilters = kInitialFilters;
+
   void showSnackBar(String message) {
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context)
@@ -48,17 +57,37 @@ class _TabScreenState extends State<TabScreen> {
     if (identifier == 'filters') {
       final result = await Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (ctx) => const FilterScreen(),
+          builder: (ctx) => FilterScreen(currentFilters: _selectedFilters),
         ),
       );
-      print(result);
+
+      setState(() {
+        _selectedFilters = result ?? kInitialFilters;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final availableMeals = dummyMeals.where((meal) {
+      if (_selectedFilters[Filter.glutenFree]! && !meal.isGlutenFree) {
+        return false;
+      }
+      if (_selectedFilters[Filter.lactoseFree]! && !meal.isLactoseFree) {
+        return false;
+      }
+      if (_selectedFilters[Filter.vegan]! && !meal.isVegan) {
+        return false;
+      }
+      if (_selectedFilters[Filter.vegetarian]! && !meal.isVegetarian) {
+        return false;
+      }
+      return true;
+    }).toList();
+    var selectedPageTitle = "Categories";
     Widget activePage = CategoriesScreen(
       onToggleFavorites: _toggleMealFavoritesStatus,
+      availableMeals: availableMeals,
     );
 
     if (selectedPageIndex == 1) {
@@ -68,6 +97,7 @@ class _TabScreenState extends State<TabScreen> {
       );
       selectedPageTitle = "Your Favorites";
     }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(selectedPageTitle),
