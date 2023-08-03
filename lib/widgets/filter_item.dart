@@ -1,40 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:meals_app/providers/filter_provider.dart';
 
-class FilterItem extends StatefulWidget {
+class FilterItem extends ConsumerWidget {
   const FilterItem(
       {super.key,
       required this.titleText,
       required this.subTitleText,
       required this.checked,
-      required this.onChanged});
+      required this.filter});
   final String titleText;
   final String subTitleText;
   final bool checked;
-  final ValueChanged<bool> onChanged;
+  final Filter filter;
 
   @override
-  State<FilterItem> createState() => _FilterItemState();
-}
-
-class _FilterItemState extends State<FilterItem> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return SwitchListTile(
-      value: widget.checked,
+      value: checked,
       onChanged: (isChecked) {
-        setState(() {
-          widget.onChanged(isChecked);
-        });
+        ref.read(filterProvider.notifier).setFilter(filter, isChecked);
       },
       title: Text(
-        widget.titleText,
+        titleText,
         style: Theme.of(context)
             .textTheme
             .titleLarge!
             .copyWith(color: Theme.of(context).colorScheme.onBackground),
       ),
       subtitle: Text(
-        "Only include ${widget.subTitleText} meals ",
+        "Only include $subTitleText meals ",
         style: Theme.of(context)
             .textTheme
             .labelMedium!
